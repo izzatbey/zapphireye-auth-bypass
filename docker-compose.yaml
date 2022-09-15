@@ -1,0 +1,36 @@
+version: "3"
+services:
+  zaproxy-auth:
+    image: owasp/zap2docker-stable
+    container_name: zaproxy-auth
+    command: [
+      "zap-x.sh",
+      "-daemon",
+      "-Xmx1867m",
+      "-host", "0.0.0.0", "-port", "8098",
+      "-config", "api.disablekey=true",
+      "-config", "api.addrs.addr.name=.*",
+      "-config", "api.addrs.addr.regex=true"
+    ]
+    ports:
+      - "8098:8098"
+    volumes:
+      - data:/data
+    networks:
+      zap:
+        - ipv4_address: 10.1.0.100
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: '4000M'
+  bodgeit:
+    image: psiinon/bodgeit
+    container_name: bodgeit
+    ports:
+      - "8090:8080"
+    networks:
+      bodgeit:
+        - ipv4_address: 10.1.0.200
+volumes:
+  data: {}
